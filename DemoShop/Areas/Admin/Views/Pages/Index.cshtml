@@ -1,0 +1,56 @@
+﻿@model IEnumerable<DemoShop.Models.ViewModels.Pages.PageVM>
+
+@{
+    ViewBag.Title = "Pages";
+}
+
+<h2>Pages</h2>
+
+<p>
+    @Html.ActionLink("Add new Page", "AddPage")
+</p>
+
+@if (!Model.Any())
+{
+    <h2 class="text-center">There are no pages!</h2>
+}
+else
+{
+    <table class="table">
+        <tr>
+            <th>
+                Title
+            </th>
+            <th>
+                Slug
+            </th>
+            <th>
+                HasSideBar
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Slug)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.HasSideBar)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "EditPage", new { id = item.Id }) |
+                    @Html.ActionLink("Details", "PageDetails", new { id = item.Id }) |
+                    @Html.ActionLink("Delete", "DeletePage", new { id = item.Id })
+                </td>
+            </tr>
+        }
+
+    </table>
+}
+
+
