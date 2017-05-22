@@ -133,7 +133,7 @@ namespace DemoShop.Areas.Admin.Controllers
             return RedirectToAction("EditPage");
         }
 
-        // GET: Admin/PageDetails
+        // GET: Admin/PageDetails/id
         public ActionResult PageDetails(int id)
         {
             PageVM model;
@@ -148,6 +148,70 @@ namespace DemoShop.Areas.Admin.Controllers
                 model = new PageVM(dto);
             }
             return View(model);
+        }
+
+        // GET: Admin/DeletePage/id (script yazdım indexte)
+        public ActionResult DeletePage(int id)
+        {
+            using (DContext db = new DContext())
+            {
+                PageDTO dto = db.Pages.Find(id);
+                db.Pages.Remove(dto);
+                db.SaveChanges();
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        //POST Admin/Pages/ReorderPages (script yazdım indexte)
+        [HttpPost]
+        public void ReorderPages(int[] id)
+        {
+            using (DContext db = new DContext())
+            {
+                int count = 1;
+                PageDTO dto;
+
+                foreach (var pageId in id)
+                {
+                    dto = db.Pages.Find(pageId);
+                    dto.Sorting = count;
+                    db.SaveChanges();
+
+                    count++;
+                }
+            }
+        }
+
+        //GET: Admin/Pages/EditSidebar
+        public ActionResult EditSidebar()
+        {
+            SidebarVM model;
+            using (DContext db = new DContext())
+            {
+                SidebarDTO dto = db.Sidebar.Find(1); //already nows we created
+
+                model = new SidebarVM(dto);
+            }
+            return View(model);
+        }
+
+
+        //POST: Admin/Pages/EditSidebar
+        [HttpPost]
+        public ActionResult EditSidebar(SidebarVM model)
+        {
+            using (DContext db = new DContext())
+            {
+                SidebarDTO dto = db.Sidebar.Find(1);
+
+                dto.Body = model.Body;
+
+                db.SaveChanges();
+            }
+            TempData["SM"] = "You edited the Sidebar";
+
+            return RedirectToAction("EditSidebar");
         }
 
     }
