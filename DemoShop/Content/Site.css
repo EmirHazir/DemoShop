@@ -5,3 +5,21 @@
 .ui-state-highlight{
     border:1px dashed #a92828;
 }
+
+div.new-cat{
+    margin-top:30px;
+    position:relative;
+}
+
+span.ajax-text{
+    display:none;
+}
+
+table.sorting.categories td{
+    padding:15px;
+}
+
+.ajaxdivtd{
+    position:absolute;
+
+}
