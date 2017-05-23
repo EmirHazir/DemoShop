@@ -1,0 +1,94 @@
+﻿@model IEnumerable<DemoShop.Models.ViewModels.Shop.ProductVM>
+
+@{
+    ViewBag.Title = "Products";
+}
+@using PagedList.Mvc;
+@using PagedList;
+<h2>Products</h2>
+<select id="SelectCategory" name="SelectCategory">
+    <option value="0">All</option>
+    @foreach (var item in ViewBag.Categories)
+    {
+        if (ViewBag.SelectedCat == item.Value)
+        {
+            <option selected="selected" value="@item.Value">@item.Text</option>
+        }
+        else
+        {
+            <option value="@item.Value">@item.Text</option>
+        }
+    }
+</select>
+<br /><br /><br />
+<p>
+    @Html.ActionLink("Add new Product", "AddProduct")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            Name
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Slug)
+        </th>
+        <th>
+           Description
+        </th>
+        <th>
+         Price
+        </th>
+
+        <th>
+          Image Name
+        </th>
+        <th></th>
+    </tr>
+    @foreach (var product in ViewBag.OnePageOfProducts)
+    {
+        <tr>
+            <td>@product.Name</td>
+            <td>@product.Description</td>
+            <td>$@product.Price</td>
+            <td>
+                <a href="/Admin/Shop/EditProduct/@product.Id">
+                    <img src="/Images/Uploads/Products/@product.Id/Thumbs/@product.ImageName" />
+                </a>
+                @product.Name
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "EditProduct", new { id = product.Id }) |
+                @Html.ActionLink("Delete", "DeleteProduct", new { id = product.Id })
+            </td>
+        </tr>
+    }
+
+</table>
+
+@Html.PagedListPager((IPagedList)ViewBag.OnePageOfProducts, page => Url.Action("Products", new { page, catId = ViewBag.SelectedCat }))
+
+@section Scripts{
+    <script>
+        $(function () {
+
+            //Select Product from category Kategoriye göre ürünleri göster
+            $("#SelectCategory").on("change", function () {
+                var url = $(this).val();
+
+                if (url) {
+                    window.location = "/Admin/Shop/Products?catId=" + url;
+                }
+                return false;
+            });
+
+
+            //Delete Page
+            $('a.delete').click(function () {
+                if (!confirm("Confirm page deletion")) {
+                    return false;
+                }
+            });
+        })
+    </script>
+    
+    }
