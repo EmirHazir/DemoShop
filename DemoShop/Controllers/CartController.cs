@@ -46,6 +46,8 @@ namespace DemoShop.Controllers
                     price += item.Quantity * item.Price;
                         
                 }
+                model.Quantity = qty;
+                model.Price = price;
             }
             else
             {
@@ -98,6 +100,60 @@ namespace DemoShop.Controllers
 
             Session["cart"] = cart;
             return PartialView(model);
+        }
+
+        //Get ARTI
+        public JsonResult IncrementProduct(int productId)
+        {
+            List<CartVM> cart = Session["cart"] as List<CartVM>;
+
+            using (DContext db = new DContext())
+            {
+                CartVM model = cart.FirstOrDefault(x => x.ProductId == productId);
+
+                model.Quantity++;
+
+                var result = new { qty = model.Quantity, price = model.Price };
+
+                return Json(result, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //EKSİ
+        public ActionResult DecrementProduct(int productId)
+        {
+            List<CartVM> cart = Session["cart"] as List<CartVM>;
+
+            using (DContext db = new DContext())
+            {
+                CartVM model = cart.FirstOrDefault(x => x.ProductId == productId);
+
+                if (model.Quantity > 1)
+                {
+                    model.Quantity--;
+                }
+                else
+                {
+                    model.Quantity = 0;
+                    cart.Remove(model);
+                }
+                var result = new { qty = model.Quantity, price = model.Price };
+
+                return Json(result, JsonRequestBehavior.AllowGet);
+
+            }
+        }
+
+        //Remove
+        public void RemoveProduct(int productId)
+        {
+            List<CartVM> cart = Session["cart"] as List<CartVM>;
+
+            using (DContext db = new DContext())
+            {
+                CartVM model = cart.FirstOrDefault(x => x.ProductId == productId);
+                cart.Remove(model);
+            }
         }
     }
 }
