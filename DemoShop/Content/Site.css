@@ -1,4 +1,5 @@
-﻿table.sorting tr:not(.home){
+﻿/*Admin page start here*/
+table.sorting tr:not(.home){
     cursor:pointer;
 }
 
@@ -21,5 +22,28 @@ table.sorting.categories td{
 
 .ajaxdivtd{
     position:absolute;
+}
 
+/*Front - end Starts here*/
+
+span.loader{
+    display:none;
+}
+
+.ajaxmsg{
+    background:#1fe447;
+    color:#b8acd7;
+    padding:10px;
+    display:none;
+    position:absolute;
+    bottom:0px;
+}
+
+.ajaxcart{
+    position:relative;
+    top:5px;
+}
+
+.ib{
+    display:inline-block !important;
 }
