@@ -1,8 +1,11 @@
-﻿using System;
+﻿using DemoShop.Models.Data;
+using DemoShop.Models.ViewModels.Account;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
 
 namespace DemoShop.Controllers
 {
@@ -23,11 +26,184 @@ namespace DemoShop.Controllers
             return View();
         }
 
+        // POST: /account/login
+        [HttpPost]
+        public ActionResult Login(LoginUserVM model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            bool isValid = false;
+
+            using (DContext db = new DContext())
+            {
+                if (db.Users.Any(x=>x.UserName.Equals(model.UserName)
+                                 && x.Password.Equals(model.Password)))
+                {
+                    isValid = true;
+                }
+            }
+            if (!isValid)
+            {
+                ModelState.AddModelError("", "Username or password is wrong!");
+                return View(model);
+            }
+            else
+            {
+                FormsAuthentication.SetAuthCookie(model.UserName, model.RememberMe); //cookiye ekledim.
+                return Redirect(FormsAuthentication.GetRedirectUrl(model.UserName, model.RememberMe));
+            }
+
+        }
+
+        //Get : /account/logout
+        public ActionResult Logout()
+        {
+            FormsAuthentication.SignOut();
+            return Redirect("~/account/login");
+        }
+
         // GET: /account/create-account
         [ActionName("create-account")]
         public ActionResult CreateAccount()
         {
             return View("CreateAccount");
         }
+
+        // POST: /account/create-account
+        [ActionName("create-account")]
+        [HttpPost]
+        public ActionResult CreateAccount(UserVM model)
+        {
+            #region Check IsValid
+            if (!ModelState.IsValid)
+            {
+                return View("CreateAccount", model);
+            }
+            if (!model.Password.Equals(model.ConfirmPassword))
+            {
+                ModelState.AddModelError("", "Passwords uyuşmuyor!");
+                return View("CreateAccount", model);
+            }
+            #endregion
+
+            using (DContext db = new DContext())
+            {
+                if (db.Users.Any(x=>x.UserName.Equals(model.UserName)))
+                {
+                    ModelState.AddModelError("","Error!"+model.UserName+ " already taken! Tyr another one.");
+                    model.UserName = "";
+                    return View("CreateAccount", model);
+                }
+
+                UserDTO userDto = new UserDTO()
+                {
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    EmailAdress = model.EmailAdress,
+                    UserName = model.UserName,
+                    Password = model.Password
+                };
+                db.Users.Add(userDto);
+                db.SaveChanges();
+
+                int id = userDto.Id;
+
+                UserRolesDTO userRolesDTO = new UserRolesDTO()
+                {
+                    UserId = id,
+                    RoleId = 2 // normal user
+                };
+                db.UserRoles.Add(userRolesDTO);
+                db.SaveChanges();
+            }
+            TempData["SM"] = "You are now registered and can login!";
+
+
+            return Redirect("~/account/login");
+        }
+
+        //User navbarpartial
+        public ActionResult UserNavPartial()
+        {
+            string userName = User.Identity.Name;
+            UserNavPartialVM model;
+            using (DContext db = new DContext())
+            {
+                UserDTO dto = db.Users.FirstOrDefault(x => x.UserName == userName);
+
+                model = new UserNavPartialVM()
+                {
+                    FirstName = dto.FirstName,
+                    LastName = dto.LastName
+                };
+            }
+
+            return PartialView(model);
+        }
+
+        //Get /account/user-profile
+        [ActionName("user-profile")]
+        public ActionResult UserProfile()
+        {
+            string userName = User.Identity.Name;
+            UserProfileVM model;
+
+            using (DContext db = new DContext())
+            {
+                UserDTO dto = db.Users.FirstOrDefault(x => x.UserName == userName);
+
+                model = new UserProfileVM(dto);
+            }
+            return View("UserProfile", model);
+        }
+
+        //POST /account/user-profile
+        [ActionName("user-profile")]
+        [HttpPost]
+        public ActionResult UserProfile(UserProfileVM model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("UserProfile",model);
+            }
+
+            if (!string.IsNullOrWhiteSpace(model.Password))
+            {
+                if (!model.Password.Equals(model.ConfirmPassword))
+                {
+                    ModelState.AddModelError("", "Passwords do not match");
+                    return View("UserProfile", model);
+                }
+            }
+
+            using (DContext db = new DContext())
+            {
+                string userName = User.Identity.Name;
+                if (db.Users.Where(x => x.Id != model.Id).Any(x => x.UserName == userName))
+                {
+                    ModelState.AddModelError("", "Username "+model.UserName+" already exist");
+                    model.UserName = "";
+                    return View("UserProfile", model);
+                }
+
+                UserDTO dto = db.Users.Find(model.Id);
+                dto.FirstName = model.FirstName;
+                dto.LastName = model.LastName;
+                dto.EmailAdress = model.EmailAdress;
+                dto.UserName = model.UserName;
+                if (!string.IsNullOrWhiteSpace(model.Password))
+                {
+                    dto.Password = model.Password;
+                }
+                db.SaveChanges();
+            }
+            TempData["SM"] = "You have edited your profile! :)";
+
+            return Redirect("~/account/user-profile");
+        }
+
     }
 }

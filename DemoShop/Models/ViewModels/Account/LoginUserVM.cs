@@ -11,7 +11,7 @@ namespace DemoShop.Models.ViewModels.Account
         [Required]
         public string UserName { get; set; }
         [Required]
-        public string Passwrd { get; set; }
+        public string Password { get; set; }
         public bool RememberMe { get; set; }
     }
 }

@@ -6,6 +6,13 @@
 
 <h2>Login</h2>
 
+@if (TempData["SM"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SM"]
+    </div>
+}
+
 @using (Html.BeginForm()) 
 {
     @Html.AntiForgeryToken()
@@ -22,10 +29,10 @@
         </div>
 
         <div class="form-group">
-            <label class="control-label col-md-2">Passwrd</label>
+            <label class="control-label col-md-2">Password</label>
             <div class="col-md-10">
-                @Html.PasswordFor(model => model.Passwrd,  new { @class = "form-control" } )
-                @Html.ValidationMessageFor(model => model.Passwrd, "", new { @class = "text-danger" })
+                @Html.PasswordFor(model => model.Password,  new { @class = "form-control" } )
+                @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
             </div>
         </div>
 
@@ -41,12 +48,10 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Login" class="btn btn-xs btn-success" />
+                <input type="submit" value="Login" class="btn btn-xs btn-success" />&nbsp;
+                <a href="/account/create-account" class="btn btn-xs btn-warning">Create an account</a>
             </div>
         </div>
     </div>
-
-    <a href="/account/create-account">Create an account</a>
-
 }
 
