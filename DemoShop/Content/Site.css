@@ -41,7 +41,7 @@ span.loader{
 
 .ajaxcart{
     position:relative;
-    top:5px;
+    top:-15px;
 }
 
 .ib{
@@ -49,9 +49,9 @@ span.loader{
 }
 
 
-ul.adminarea{
-    position:relative;
-    top:5px;
+ul.adminarea {
+    position: relative;
+    top: -15px;
 }
 
 

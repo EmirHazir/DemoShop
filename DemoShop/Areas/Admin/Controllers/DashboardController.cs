@@ -9,6 +9,7 @@ namespace DemoShop.Areas.Admin.Controllers
     public class DashboardController : Controller
     {
         // GET: Admin/Dashboard
+        [Authorize(Roles ="Admin")]
         public ActionResult Index()
         {
             return View();

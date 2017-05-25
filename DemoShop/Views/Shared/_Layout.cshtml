@@ -10,67 +10,45 @@
 <body>
     <div class="navbar navbar-inverse navbar-fixed-topcancel">
         <div class="container">
-            <div class="navbar-header">
+            <div class="navbar-header" >
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a href="/" class="navbar-brand">Demo Shop</a>
+                <a href="/" class="navbar-brand" style="padding:25px 0 0 0">Demo Shop</a>
+                
             </div>
-            <div class="navbar-collapse collapse">
+            <div class="navbar-collapse collapse"style="padding:10px 0 0 0" >
                 <ul class="nav navbar-nav">
-                    <!--PagesMenuPartial-->
                     @Html.Action("PagesMenuPartial", "Pages")
-                    <!--PagesMenuPartial Finis-->
-                    <!--User login logout navbar -->
-                    @* @if (Request.IsAuthenticated)
-                        {
-                            <li><a href="/account/logout">Logout</a></li>
-                        }
-                        else
-                        {
-                            if (ViewBag.Title == "Login")
-                            {
-                                <li class="active"><a href="/account/login">Login</a></li>
-                            }
-                            else
-                            {
-                                <li><a href="/account/login">Login</a></li>
-                            }
-                        }
-                        <!--User login logout navbar finish -->
-
-                         <!--UserNavPartialNav-->
-                        @if (Request.IsAuthenticated)
-                        {
-                            <li>@Html.Action("UserNavPartial", "Account", new { area = "" })</li>
-                        }
-                          <!--UserNavPartialNav finish-->*@
                 </ul>
+            </div>
 
+            <div class="navbar-collapse collapse" >
                 <!--Kullanıcıyı sağa cektim-->
-                <ul class="navbar-collapse collapse navbar-right">
+                <ul class="navbar-collapse collapse navbar-right" style="margin:-15px 0 0 0">
+
                     @* User login logout navbar *@
                     @if (Request.IsAuthenticated)
                     {
-                    <li><a href="/account/logout">Logout</a></li>
+                        <li><a href="/account/logout">Logout</a></li>
                     }
                     else
                     {
                         if (ViewBag.Title == "Login")
                         {
-                    <li class="active"><a href="/account/login">Login</a></li>
+                            <li class="active"><a href="/account/login">Login</a></li>
                         }
                         else
                         {
-                    <li><a href="/account/login">Login</a></li>
+                            <li><a href="/account/login">Login</a></li>
                         }
                     }
                     @* UserNavPartialNav *@
                     @if (Request.IsAuthenticated && User.IsInRole("User"))
                     {
-                        if (ViewBag.Title == "User Profile")
+                        if (ViewBag.Title == "User Profile" || ViewBag.Title == "Orders")
                         {
                             <li class="active">@Html.Action("UserNavPartial", "Account", new { area = "" })</li>
                         }
@@ -85,7 +63,7 @@
                 @if (Request.IsAuthenticated && User.IsInRole("Admin"))
                 {
                     <ul class="navbar-collapse collapse navbar-right adminarea">
-                        <li>@Html.ActionLink("Admin Area", "Index","Dashboard", new { area = "Admin" },null)</li>
+                        <li>@Html.ActionLink("Admin Area", "Index", "Dashboard", new { area = "Admin" }, null)</li>
                     </ul>
                 }
                 else
@@ -98,19 +76,40 @@
                     }
 
                 }
-
-
-                
             </div>
         </div>
     </div>
     <div class="container body-content">
 
         <div class="row">
-
-            <div class="col-xs-12 col-md-2">
-                @Html.Action("CategoryMenuPartial", "Shop")
-            </div>
+            <!--Kategorileri belli sayfalarda göstemiyorum-->
+            @if (ViewBag.Title != "Create Account"
+                && ViewBag.Title != "Login"
+                && ViewBag.Title != "User Profile"
+                && ViewBag.Title != "Orders")
+            {
+                <div class="col-xs-12 col-md-2">
+                    @Html.Action("CategoryMenuPartial", "Shop")
+                </div>
+            }
+            <!--User profile sayfasinda iken üste buton ekliyorum(orders)-->
+            @if (ViewBag.Title == "User Profile")
+            {
+                <div class="col-xs-12 col-md-2">
+                    <ul>
+                        <li><a class="btn btn-xs btn-info" href="/account/orders">My Orders</a></li>
+                    </ul>
+                </div>
+            }
+            <!--Orders sayfasinda iken üste buton ekliyorum(user-profile)-->
+            @if (ViewBag.Title == "Orders")
+            {
+                <div class="col-xs-12 col-md-2">
+                    <ul>
+                        <li><a class="btn btn-xs btn-info" href="/account/user-profile">My Profile</a></li>
+                    </ul>
+                </div>
+            }
 
             @if (ViewBag.Sidebar == "Yes")
             {
