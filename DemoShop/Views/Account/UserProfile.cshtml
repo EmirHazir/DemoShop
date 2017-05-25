@@ -19,6 +19,8 @@
     <div class="form-horizontal">
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Id)
+
         <div class="form-group">
             <label class="control-label col-md-2">First Name</label>
             <div class="col-md-10">
