@@ -17,15 +17,19 @@
         <br />
         @Html.DisplayFor(model => model.Price)
         <br />
-        <div class="addrocart">
-            <a href="#" class="addtocart">Add to Cart</a>
-            <span class="loader">
-               <img src="~/Content/img/ajax-loader.gif" />
-            </span>
-            <span class="ajaxmsg">
-                The product has been added your cart
-            </span>
-        </div>
+
+        @if (Request.IsAuthenticated)
+        {
+            <div class="addrocart">
+                <a href="#" class="addtocart">Add to Cart</a>
+                <span class="loader">
+                    <img src="~/Content/img/ajax-loader.gif" />
+                </span>
+                <span class="ajaxmsg">
+                    The product has been added your cart
+                </span>
+            </div>
+        }
     </div>
 </div>
 <hr />
@@ -46,8 +50,8 @@
 
 
 <link href="~/Content/jquery.fancybox.css" rel="stylesheet" />
-@section Scripts{   
-<script src="~/Scripts/jquery.fancybox.js"></script>
+@section Scripts{
+    <script src="~/Scripts/jquery.fancybox.js"></script>
     <script>
         $(function () {
 
@@ -80,5 +84,5 @@
 
     </script>
 
-    }
+}
 
